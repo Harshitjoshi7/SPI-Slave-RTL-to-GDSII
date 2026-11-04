@@ -1,0 +1,221 @@
+
+ 	 Check Design Report (c)
+	 ------------------- 
+No subdesign's name is greater than 1.5k in length.
+
+ Feedthrough Module(s)
+ -------------------------
+No feed through module in 'spi_slave'
+
+  Unresolved References & Empty Modules
+  ------------------------------------- 
+No unresolved references in design 'spi_slave'
+
+No empty modules in design 'spi_slave'
+
+ Unloaded Pin(s), Port(s)
+ -------------------------
+No unloaded sequential element in 'spi_slave'
+
+No unloaded port in 'spi_slave'
+
+ Unloaded Combinational Pin(s)
+ -------------------------------
+No unloaded combinational element in 'spi_slave'
+
+ Assigns
+ ------- 
+Total number of assign statements in design 'spi_slave' : 0
+
+ Undriven Port(s)/Pin(s)
+ ------------------------
+No undriven combinational pin in 'spi_slave'
+
+No undriven sequential pin in 'spi_slave'
+
+No undriven hierarchical pin in 'spi_slave'
+
+No undriven port in 'spi_slave'
+
+ Multidriven Port(s)/Pin(s)
+--------------------------
+
+No multidriven combinational pin in 'spi_slave'
+
+No multidriven sequential pin in 'spi_slave'
+
+No multidriven hierarchical pin in 'spi_slave'
+
+No multidriven ports in 'spi_slave'
+
+No multidriven unloaded nets in 'spi_slave'
+
+  Constant Pin(s)
+  ----------------
+No constant combinational pin(s) in design 'spi_slave'
+
+No constant sequential pin(s) in design 'spi_slave'
+
+No constant hierarchical pin(s) in design 'spi_slave'
+
+No constant connected ports in design 'spi_slave'
+
+  Preserved instances(s)
+  ----------------
+No preserved combinational instance(s) in design 'spi_slave'
+No preserved sequential instance(s) in design 'spi_slave'
+No preserved hierarchical instance(s) in design 'spi_slave'
+
+  Physical only instances(s)
+  ----------------
+No physical only instance(s) in design 'spi_slave'
+
+  Logical only instance(s) and linked libcells
+    -----------------------------------------
+No logical only instance(s) in design 'spi_slave'
+
+Libcells with no corresponding LEF
+----------------------------------
+No libcell(s) found.
+
+LEF cells with no corresponding libcell
+---------------------------------------
+lib_cell:default_emulate_libset_max/physical_cells/ANTENNA
+lib_cell:default_emulate_libset_max/physical_cells/DECAP2
+lib_cell:default_emulate_libset_max/physical_cells/DECAP3
+lib_cell:default_emulate_libset_max/physical_cells/DECAP4
+lib_cell:default_emulate_libset_max/physical_cells/DECAP5
+lib_cell:default_emulate_libset_max/physical_cells/DECAP6
+lib_cell:default_emulate_libset_max/physical_cells/DECAP7
+lib_cell:default_emulate_libset_max/physical_cells/DECAP8
+lib_cell:default_emulate_libset_max/physical_cells/DECAP9
+lib_cell:default_emulate_libset_max/physical_cells/DECAP10
+lib_cell:default_emulate_libset_max/physical_cells/DFF2RX1
+lib_cell:default_emulate_libset_max/physical_cells/DFF2RX2
+lib_cell:default_emulate_libset_max/physical_cells/DFF2X1
+lib_cell:default_emulate_libset_max/physical_cells/DFF2X2
+lib_cell:default_emulate_libset_max/physical_cells/DFF4RX1
+lib_cell:default_emulate_libset_max/physical_cells/DFF4RX2
+lib_cell:default_emulate_libset_max/physical_cells/DFF4X1
+lib_cell:default_emulate_libset_max/physical_cells/DFF4X2
+lib_cell:default_emulate_libset_max/physical_cells/DFFNSRX4
+lib_cell:default_emulate_libset_max/physical_cells/DFFSX2
+lib_cell:default_emulate_libset_max/physical_cells/FILL1
+lib_cell:default_emulate_libset_max/physical_cells/FILL16
+lib_cell:default_emulate_libset_max/physical_cells/FILL2
+lib_cell:default_emulate_libset_max/physical_cells/FILL32
+lib_cell:default_emulate_libset_max/physical_cells/FILL4
+lib_cell:default_emulate_libset_max/physical_cells/FILL64
+lib_cell:default_emulate_libset_max/physical_cells/FILL8
+lib_cell:default_emulate_libset_max/physical_cells/FSWNX1
+lib_cell:default_emulate_libset_max/physical_cells/FSWX1
+lib_cell:default_emulate_libset_max/physical_cells/HSWDNX1
+lib_cell:default_emulate_libset_max/physical_cells/HSWDX1
+lib_cell:default_emulate_libset_max/physical_cells/HSWNX1
+lib_cell:default_emulate_libset_max/physical_cells/HSWX1
+lib_cell:default_emulate_libset_max/physical_cells/ISOHLDX1_OFF
+lib_cell:default_emulate_libset_max/physical_cells/ISOHLDX1_ON
+lib_cell:default_emulate_libset_max/physical_cells/ISOHX1_OFF
+lib_cell:default_emulate_libset_max/physical_cells/ISOHX1_ON
+lib_cell:default_emulate_libset_max/physical_cells/ISOLX1_OFF
+lib_cell:default_emulate_libset_max/physical_cells/ISOLX1_ON
+lib_cell:default_emulate_libset_max/physical_cells/ISONLX1_OFF
+lib_cell:default_emulate_libset_max/physical_cells/ISONLX1_ON
+lib_cell:default_emulate_libset_max/physical_cells/LSHL_ISOH_X1_FROM_OFF
+lib_cell:default_emulate_libset_max/physical_cells/LSHL_ISOH_X1_TO_ON
+lib_cell:default_emulate_libset_max/physical_cells/LSHL_ISOL_X1_FROM_OFF
+lib_cell:default_emulate_libset_max/physical_cells/LSHL_ISOL_X1_TO_ON
+lib_cell:default_emulate_libset_max/physical_cells/LSHL_ISONH_X1_FROM_OFF
+lib_cell:default_emulate_libset_max/physical_cells/LSHL_ISONH_X1_TO_ON
+lib_cell:default_emulate_libset_max/physical_cells/LSHL_ISONL_X1_FROM_OFF
+lib_cell:default_emulate_libset_max/physical_cells/LSHL_ISONL_X1_TO_ON
+lib_cell:default_emulate_libset_max/physical_cells/LSHLX1_FROM
+lib_cell:default_emulate_libset_max/physical_cells/LSHLX1_TO
+lib_cell:default_emulate_libset_max/physical_cells/LSLH_ISOH_X1_FROM_OFF
+lib_cell:default_emulate_libset_max/physical_cells/LSLH_ISOH_X1_TO_ON
+lib_cell:default_emulate_libset_max/physical_cells/LSLH_ISOL_X1_FROM_OFF
+lib_cell:default_emulate_libset_max/physical_cells/LSLH_ISOL_X1_TO_ON
+lib_cell:default_emulate_libset_max/physical_cells/LSLH_ISONH_X1_FROM_OFF
+lib_cell:default_emulate_libset_max/physical_cells/LSLH_ISONH_X1_TO_ON
+lib_cell:default_emulate_libset_max/physical_cells/LSLH_ISONL_X1_FROM_OFF
+lib_cell:default_emulate_libset_max/physical_cells/LSLH_ISONL_X1_TO_ON
+lib_cell:default_emulate_libset_max/physical_cells/LSLHX1_FROM
+lib_cell:default_emulate_libset_max/physical_cells/LSLHX1_TO
+lib_cell:default_emulate_libset_max/physical_cells/PBUFX2
+lib_cell:default_emulate_libset_max/physical_cells/PINVX1
+lib_cell:default_emulate_libset_max/physical_cells/RDFFNQX1
+lib_cell:default_emulate_libset_max/physical_cells/RDFFNRQX1
+lib_cell:default_emulate_libset_max/physical_cells/RDFFNRX1
+lib_cell:default_emulate_libset_max/physical_cells/RDFFNSQX1
+lib_cell:default_emulate_libset_max/physical_cells/RDFFNSRQX1
+lib_cell:default_emulate_libset_max/physical_cells/RDFFNSRX1
+lib_cell:default_emulate_libset_max/physical_cells/RDFFNSX1
+lib_cell:default_emulate_libset_max/physical_cells/RDFFNX1
+lib_cell:default_emulate_libset_max/physical_cells/RDFFQX1
+lib_cell:default_emulate_libset_max/physical_cells/RDFFRQX1
+lib_cell:default_emulate_libset_max/physical_cells/RDFFRX1
+lib_cell:default_emulate_libset_max/physical_cells/RDFFSQX1
+lib_cell:default_emulate_libset_max/physical_cells/RDFFSRQX1
+lib_cell:default_emulate_libset_max/physical_cells/RDFFSRX1
+lib_cell:default_emulate_libset_max/physical_cells/RDFFSX1
+lib_cell:default_emulate_libset_max/physical_cells/RDFFX1
+lib_cell:default_emulate_libset_max/physical_cells/RTLATRX1
+lib_cell:default_emulate_libset_max/physical_cells/RTLATSRX1
+lib_cell:default_emulate_libset_max/physical_cells/RTLATX1
+lib_cell:default_emulate_libset_max/physical_cells/SDFF2RX1
+lib_cell:default_emulate_libset_max/physical_cells/SDFF2RX2
+lib_cell:default_emulate_libset_max/physical_cells/SDFF4RX1
+lib_cell:default_emulate_libset_max/physical_cells/SDFF4RX2
+lib_cell:default_emulate_libset_max/physical_cells/SPDFF2RX1
+lib_cell:default_emulate_libset_max/physical_cells/SPDFF2RX2
+lib_cell:default_emulate_libset_max/physical_cells/SPDFF4RX1
+lib_cell:default_emulate_libset_max/physical_cells/SPDFF4RX2
+lib_cell:default_emulate_libset_max/physical_cells/SRDFFNQX1
+lib_cell:default_emulate_libset_max/physical_cells/SRDFFNRQX1
+lib_cell:default_emulate_libset_max/physical_cells/SRDFFNRX1
+lib_cell:default_emulate_libset_max/physical_cells/SRDFFNSQX1
+lib_cell:default_emulate_libset_max/physical_cells/SRDFFNSRQX1
+lib_cell:default_emulate_libset_max/physical_cells/SRDFFNSRX1
+lib_cell:default_emulate_libset_max/physical_cells/SRDFFNSX1
+lib_cell:default_emulate_libset_max/physical_cells/SRDFFNX1
+lib_cell:default_emulate_libset_max/physical_cells/SRDFFQX1
+lib_cell:default_emulate_libset_max/physical_cells/SRDFFRQX1
+lib_cell:default_emulate_libset_max/physical_cells/SRDFFRX1
+lib_cell:default_emulate_libset_max/physical_cells/SRDFFSQX1
+lib_cell:default_emulate_libset_max/physical_cells/SRDFFSRQX1
+lib_cell:default_emulate_libset_max/physical_cells/SRDFFSRX1
+lib_cell:default_emulate_libset_max/physical_cells/SRDFFSX1
+lib_cell:default_emulate_libset_max/physical_cells/SRDFFX1
+Total number cell(s) with only physical (LEF) Info : 106
+
+ Summary
+ ------- 
+
+              Name                       Total
+----------------------------------------------
+Unresolved References                        0
+Empty Modules                                0
+Unloaded Port(s)                             0
+Unloaded Sequential Pin(s)                   0
+Unloaded Combinational Pin(s)                0
+Assigns                                      0
+Undriven Port(s)                             0
+Undriven Leaf Pin(s)                         0
+Undriven hierarchical pin(s)                 0
+Multidriven Port(s)                          0
+Multidriven Leaf Pin(s)                      0
+Multidriven hierarchical Pin(s)              0
+Multidriven unloaded net(s)                  0
+Constant Port(s)                             0
+Constant Leaf Pin(s)                         0
+Constant hierarchical Pin(s)                 0
+Preserved leaf instance(s)                   0
+Preserved hierarchical instance(s)           0
+Feedthrough Modules(s)                       0
+Libcells with no LEF cell                    0
+Physical (LEF) cells with no libcell       106
+Subdesigns with long module name             0
+Physical only instance(s)                    0
+Logical only instance(s)                     0
+
+  Done Checking the design.

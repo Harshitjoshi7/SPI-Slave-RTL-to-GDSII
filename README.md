@@ -11,15 +11,10 @@ A complete, production-grade digital ASIC implementation of a **4-wire synchrono
 
 ## 📑 Table of Contents
 - [Architecture & Design Specifications](#-architecture--design-specifications)
-- [Project Directory Structure](#-project-directory-structure)
-- [ASIC Implementation Flow](#-asic-implementation-flow)
-- [1. RTL Simulation & Verification](#1-rtl-simulation--verification)
-- [2. Logic Synthesis (Cadence Genus)](#2-logic-synthesis-cadence-genus)
-- [3. Formal Equivalence Checking (Conformal LEC)](#3-formal-equivalence-checking-conformal-lec)
-- [4. Place & Route (Cadence Innovus)](#4-place--route-cadence-innovus)
-- [5. Physical Signoff (Cadence PVS DRC & LVS)](#5-physical-signoff-cadence-pvs-drc--lvs)
+- [Repository Structure](#-repository-structure)
+- [Key Implementation Deliverables (Output)](#-key-implementation-deliverables-output)
+- [ASIC Implementation Overview](#-asic-implementation-overview)
 - [Physical Layout & Verification Gallery](#-physical-layout--verification-gallery)
-- [Quick Start Command Playbook](#-quick-start-command-playbook)
 - [Author & Acknowledgments](#-author--acknowledgments)
 
 ---
@@ -49,42 +44,61 @@ The core is a configurable **SPI Slave** peripheral supporting **SPI Mode 0** ($
 
 ---
 
-## 📂 Project Directory Structure
+## 📂 Repository Structure
+
+The repository is structured to maintain only the design sources, constraints, and final output deliverables:
 
 ```text
+.
 ├── constraints/
 │   └── spi_slave.sdc              # Timing constraints (SDC 2.1)
 ├── src/
 │   └── spi_slave.v                # Synthesizable RTL Verilog source
-├── tb/
-│   ├── spi_slave_tb.v             # Comprehensive self-checking testbench
-│   └── verify_spi.py              # Python / cocotb test verification
-├── scripts/
-│   ├── genus_synth.tcl            # Cadence Genus complete synthesis flow
-│   ├── mmmc.tcl                   # Multi-Mode Multi-Corner definition
-│   ├── innovus_pnr.tcl            # Cadence Innovus end-to-end PnR flow
-│   ├── conformal_lec.tcl          # Cadence Conformal formal equivalence proof
-│   ├── step1_init.tcl             # Step 1: Design database initialization
-│   ├── step2_floorplan.tcl        # Step 2: Floorplan, core utilization, pin placement
-│   ├── step3_power.tcl            # Step 3: Power rings, stripes, and follow-pin sroute
-│   ├── step4_place.tcl            # Step 4: Endcap, well-tap, timing-driven placement
-│   ├── step5_cts.tcl              # Step 5: CCOpt clock tree synthesis & balance
-│   ├── step6_route.tcl            # Step 6: Filler cell insertion & NanoRoute
-│   ├── step7_export.tcl           # Step 7: GDSII, SPEF, SDF, netlist export
-│   ├── step16_hold_fix.tcl        # Post-route hold violation ECO buffer insertion
-│   ├── hcells.txt                 # Hierarchy correspondence file for PVS LVS
-│   ├── pvs_drc.ctrl               # PVS DRC control rule options
-│   ├── pvs_lvs.ctrl               # PVS LVS control rule options
-│   ├── run_pvs_drc.csh            # Shell execution script for PVS DRC
-│   └── run_pvs_lvs.csh            # Shell execution script for PVS LVS
-├── project_spi_images/            # Tool screenshots (Genus, Innovus, PVS DRC/LVS)
-├── RTL_TO_GDSII_COMPLETE_GUIDE.md # Detailed technical manual & command guide
-└── .gitignore                     # Git ignore rules for Cadence temp/log files
+├── output/
+│   ├── gds/
+│   │   └── spi_slave.gds          # Final tapeout GDSII stream file (923 KB)
+│   ├── netlist/
+│   │   ├── spi_slave_synth.v      # Synthesized gate-level netlist (Cadence Genus)
+│   │   ├── spi_slave_synth.sdc    # Synthesized SDC timing constraints
+│   │   ├── spi_slave_postroute.v  # Final post-route netlist (Cadence Innovus)
+│   │   ├── spi_slave_postroute_pg.v # Post-route netlist with PG pins (for PVS LVS)
+│   │   ├── spi_slave_postroute.spef # Extracted interconnect parasitics (SPEF)
+│   │   └── spi_slave_postroute.sdf  # Back-annotated timing delay file (SDF)
+│   ├── reports/
+│   │   ├── area_synth.rpt         # Standard cell area & count breakdown
+│   │   ├── power_synth.rpt        # Dynamic, leakage, and total power report
+│   │   ├── timing_synth.rpt       # Critical path setup timing report
+│   │   ├── qor_synth.rpt          # Quality of Results summary report
+│   │   ├── clocks_synth.rpt       # Clock domain specification report
+│   │   ├── check_design_synth.rpt # Synthesis design rules & unresolved pins check
+│   │   ├── drc_signoff.sum        # Cadence PVS DRC signoff report
+│   │   └── lvs_signoff.rep        # Cadence PVS LVS comparison report
+│   ├── database/
+│   │   ├── spi_slave_final.enc    # Innovus session restore file
+│   │   └── spi_slave_final.enc.dat/ # Full routed physical database
+│   └── images/                    # Tool run screenshots (Genus, Innovus, PVS DRC/LVS)
+├── README.md                      # Project documentation
+└── .gitignore                     # Git ignore rules
 ```
 
 ---
 
-## 🔄 ASIC Implementation Flow
+## 📦 Key Implementation Deliverables (Output)
+
+| File Category | Deliverable Path | Description |
+|---|---|---|
+| **Tapeout GDSII** | `output/gds/spi_slave.gds` | Final GDSII mask stream ready for fabrication |
+| **Routed Layout DB** | `output/database/spi_slave_final.enc` | Innovus full design database with placement & routes |
+| **Gate Netlists** | `output/netlist/spi_slave_synth.v`<br>`output/netlist/spi_slave_postroute.v` | Synthesized and post-route Verilog netlists |
+| **Physical LVS Netlist**| `output/netlist/spi_slave_postroute_pg.v`| Post-route netlist including explicit VDD/VSS pins |
+| **Parasitics & Delays** | `output/netlist/spi_slave_postroute.spef`<br>`output/netlist/spi_slave_postroute.sdf` | Extracted wire parasitics and back-annotated timing delays |
+| **Synthesis QoR** | `output/reports/area_synth.rpt`<br>`output/reports/power_synth.rpt`<br>`output/reports/timing_synth.rpt` | Complete synthesis Quality of Results reports |
+| **Signoff DRC** | `output/reports/drc_signoff.sum` | Physical Verification System DRC report |
+| **Signoff LVS** | `output/reports/lvs_signoff.rep` | Physical Verification System LVS comparison report |
+
+---
+
+## 🔄 ASIC Implementation Overview
 
 ```
                       +-----------------------------+
@@ -94,8 +108,8 @@ The core is a configurable **SPI Slave** peripheral supporting **SPI Mode 0** ($
                                      |
                                      v
                       +-----------------------------+
-                      |   RTL Simulation (xrun)     |
-                      |     (tb/spi_slave_tb.v)     |
+                      |   Timing Constraints (SDC)  |
+                      |  (constraints/spi_slave.sdc)|
                       +-----------------------------+
                                      |
                                      v
@@ -105,15 +119,7 @@ The core is a configurable **SPI Slave** peripheral supporting **SPI Mode 0** ($
                       |  - SDC: 20 MHz sys, 2MHz SPI|
                       +-----------------------------+
                                      |
-             +-----------------------+-----------------------+
-             |                                               |
-             v                                               v
-+-------------------------+                     +-------------------------+
-| Formal LEC (Conformal)  |                     |  Gate-Level Simulation  |
-| Golden RTL vs. Netlist  |                     |  (netlist/spi_slave.v)  |
-+-------------------------+                     +-------------------------+
-             |
-             v
+                                     v
 +-------------------------------------------------------------------------+
 |                  Physical Implementation (Cadence Innovus)              |
 |                                                                         |
@@ -130,8 +136,8 @@ The core is a configurable **SPI Slave** peripheral supporting **SPI Mode 0** ($
                                      v
 +-------------------------------------------------------------------------+
 |                  Parasitic Extraction & Signoff STA                     |
-|  - Signoff RC extraction -> SPEF & SDF generation                       |
-|  - Static Timing Analysis across setup & hold corners                   |
+|  - Signoff RC extraction -> output/netlist/spi_slave_postroute.spef     |
+|  - Delay calculation     -> output/netlist/spi_slave_postroute.sdf      |
 +-------------------------------------------------------------------------+
                                      |
              +-----------------------+-----------------------+
@@ -140,85 +146,15 @@ The core is a configurable **SPI Slave** peripheral supporting **SPI Mode 0** ($
 +-------------------------+                     +-------------------------+
 |   Cadence PVS Signoff   |                     |   Cadence PVS Signoff   |
 |     Design Rule Check   |                     |   Layout vs. Schematic  |
-|         (DRC: 0)        |                     |     (LVS: Equivalent)   |
+| (output/reports/drc...) |                     | (output/reports/lvs...) |
 +-------------------------+                     +-------------------------+
                                      |
                                      v
                       +-----------------------------+
                       |     Tapeout GDSII Stream    |
-                      |    (output/spi_slave.gds)   |
+                      |  (output/gds/spi_slave.gds) |
                       +-----------------------------+
 ```
-
----
-
-## 1. RTL Simulation & Verification
-
-Simulation is verified using **Cadence Xcelium (`xrun`)**:
-```bash
-# RTL Simulation with Cadence Xcelium
-xrun -64bit -clean -timescale 1ns/1ps -access +rwc src/spi_slave.v tb/spi_slave_tb.v -log reports/xrun_rtl.log
-```
-The testbench validates:
-1. Multi-register write transactions across address spaces `0x00` through `0x03`.
-2. Serial readback and byte comparison.
-3. Overwrite verification and boundary condition assertions (`0x00`, `0xFF`).
-4. Mid-transaction `CSB` aborts for robustness and state-recovery verification.
-
----
-
-## 2. Logic Synthesis (Cadence Genus)
-
-Synthesis maps RTL logic into the **GPDK045** standard cell library:
-```bash
-genus -f scripts/genus_synth.tcl
-```
-- **Constraint Strategy**: Defined in `constraints/spi_slave.sdc` using asynchronous clock groups (`set_clock_groups -asynchronous`) between `clk_sys` and `clk_sck`.
-- **Results**: Zero unresolved references, positive slack on all paths, optimized area and dynamic power consumption.
-
----
-
-## 3. Formal Equivalence Checking (Conformal LEC)
-
-Proves that technology-mapped gates preserve exact functional intent without test vectors:
-```bash
-lec -xl -nogui -do scripts/conformal_lec.tcl
-```
-- **Golden**: `src/spi_slave.v`
-- **Revised**: `netlist/spi_slave_synth.v`
-- **Result**: `Compared points: N, Equivalent: N, Non-equivalent: 0` (100% equivalence).
-
----
-
-## 4. Place & Route (Cadence Innovus)
-
-Physical design implements the layout inside Cadence Innovus:
-```bash
-innovus -stylus -f scripts/innovus_pnr.tcl
-```
-
-### Flow Highlights:
-- **Floorplanning**: Core utilization of 65% with square aspect ratio (1.0). Pin placement on `Metal3` layers (North: `clock`, `resetb`; East: `MISO`; West: `SCK`, `CSB`, `MOSI`).
-- **Power Distribution (PDN)**: Power rings on `Metal4` / `Metal5`, power stripes for vertical/horizontal grids, and follow-pin `sroute` on `Metal1`.
-- **Placement**: Legalized cell placement with well-tap cells inserted every $30\mu\text{m}$ and row boundary endcap cells.
-- **CTS**: Cadence CCOpt clock tree balancing with targeted skew $< 100\text{ ps}$.
-- **Filler Insertion**: `FILL64` down to `FILL1` cells inserted prior to detail routing.
-- **NanoRoute**: Grid-based detail routing with On-Chip Variation (OCV) analysis and Clock Path Pessimism Removal (CPPR).
-
----
-
-## 5. Physical Signoff (Cadence PVS DRC & LVS)
-
-Signoff verification using Cadence Physical Verification System (PVS):
-```bash
-# Execute Signoff DRC
-csh scripts/run_pvs_drc.csh
-
-# Execute Signoff LVS
-csh scripts/run_pvs_lvs.csh
-```
-- **DRC Status**: Clean layout with **0 Design Rule Violations** (`spi_slave.sum`).
-- **LVS Status**: **`LVS STATUS: CORRECT - LAYOUT AND SOURCE NETLIST ARE EQUIVALENT`** (`spi_slave.rep`).
 
 ---
 
@@ -226,28 +162,15 @@ csh scripts/run_pvs_lvs.csh
 
 | Floorplan & Pin Allocation | Power Distribution Network |
 |---|---|
-| ![Floorplan](project_spi_images/IN%20floorplaning%20_%209.png) | ![Power Planning](project_spi_images/innvous%20Power%2010.png) |
+| ![Floorplan](output/images/IN%20floorplaning%20_%209.png) | ![Power Planning](output/images/innvous%20Power%2010.png) |
 
 | Final NanoRoute Placement & Routing | Genus Synthesis Area Report |
 |---|---|
-| ![Placement & Routing](project_spi_images/final%20placement%20routing%2011.png) | ![Genus Area](project_spi_images/genus%20area%206.png) |
+| ![Placement & Routing](output/images/final%20placement%20routing%2011.png) | ![Genus Area](output/images/genus%20area%206.png) |
 
-| Cadence PVS Signoff DRC (Clean) | Cadence PVS Signoff LVS (Matched) |
+| Cadence PVS Signoff DRC | Cadence PVS Signoff LVS |
 |---|---|
-| ![PVS DRC](project_spi_images/DRC%2012.png) | ![PVS LVS](project_spi_images/LVS_13.png) |
-
----
-
-## ⚡ Quick Start Command Playbook
-
-| Phase | EDA Tool | Command |
-|---|---|---|
-| **RTL Simulation** | Cadence Xcelium | `xrun -64bit -timescale 1ns/1ps -access +rwc src/spi_slave.v tb/spi_slave_tb.v` |
-| **Logic Synthesis** | Cadence Genus | `genus -f scripts/genus_synth.tcl` |
-| **Formal LEC** | Cadence Conformal | `lec -xl -nogui -do scripts/conformal_lec.tcl` |
-| **Place & Route** | Cadence Innovus | `innovus -stylus -f scripts/innovus_pnr.tcl` |
-| **PVS DRC** | Cadence PVS | `csh scripts/run_pvs_drc.csh` |
-| **PVS LVS** | Cadence PVS | `csh scripts/run_pvs_lvs.csh` |
+| ![PVS DRC](output/images/DRC%2012.png) | ![PVS LVS](output/images/LVS_13.png) |
 
 ---
 
@@ -256,4 +179,3 @@ csh scripts/run_pvs_lvs.csh
 - **Author**: [Harshit Joshi](https://github.com/Harshitjoshi7)
 - **Technology**: 45nm Generic Process Design Kit (GPDK045)
 - **EDA Infrastructure**: Cadence Design Systems (Genus, Innovus, Xcelium, Conformal, PVS)
-
