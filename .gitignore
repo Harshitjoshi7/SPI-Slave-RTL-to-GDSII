@@ -1,0 +1,38 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Cadence EDA temporary files & logs
+*.log
+*.cmd*
+*.vst
+*.enc.dat
+*.key
+cds.lib
+cdsinfo.tag
+xcelium.d/
+INCA_libs/
+waves.shm/
+*.vcd
+*.fsdb
+
+# Cadence Genus / Innovus work directories
+fv/
+genus.cmd*
+genus.log*
+innovus.cmd*
+innovus.log*
+
+# Physical verification run directories (PVS / Pegasus / Calibre)
+pvs_output/
+run_dir/
+*.rep
+*.sum
+*.gds.gz
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store

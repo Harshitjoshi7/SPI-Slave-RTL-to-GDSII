@@ -1,0 +1,36 @@
+//=============================================================================
+// PVS Standalone DRC Control File for spi_slave (45nm GPDK)
+//
+// USAGE (command line, outside Innovus):
+//   pvs -drc -control scripts/pvs_drc.ctrl
+//
+// This runs PVS as a standalone tool, which is the preferred method for
+// final tapeout signoff (independent of the PnR tool).
+//=============================================================================
+
+// Input layout (GDSII from Innovus streamOut)
+layout_path         "output/spi_slave.gds"
+layout_primary_cell "spi_slave"
+layout_format       GDSII
+
+// Official 45nm GPDK DRC rule file
+rule_file           "/home/ec/install/FOUNDRY/analog/45nm/pvs/pvlDRC.rul"
+
+// Output directory for results
+results_db_path     "pvs_output/standalone_drc"
+
+// Report file
+report_file         "pvs_output/standalone_drc/drc_report.txt"
+
+// DRC parameters
+drc_select_check    ALL
+drc_unselect_check  NONE
+
+// Number of parallel threads (adjust for your machine)
+num_threads         4
+
+// Coordinate precision
+layout_precision    1000
+
+// Run options
+virtual_connect     YES
