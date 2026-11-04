@@ -16,10 +16,11 @@ A complete, production-grade digital ASIC implementation of a **4-wire synchrono
 - [Repository Structure](#-repository-structure)
 - [Key Implementation Deliverables (Output)](#-key-implementation-deliverables-output)
 - [ASIC Implementation Overview](#-asic-implementation-overview)
-- [1. Cadence Xcelium (`xrun`) Simulation & Waveforms](#1-cadence-xcelium-xrun-simulation--waveforms)
-- [2. Cadence Genus Synthesis Reports](#2-cadence-genus-synthesis-reports)
-- [3. Cadence Innovus Place & Route (PnR) Layouts](#3-cadence-innovus-place--route-pnr-layouts)
-- [4. Cadence PVS Physical Verification Signoff (DRC & LVS)](#4-cadence-pvs-physical-verification-signoff-drc--lvs)
+- [1. Functional Simulation & SimVision Waveforms (Cadence Xcelium)](#1-functional-simulation--simvision-waveforms-cadence-xcelium)
+- [2. Logic Synthesis & Schematic (Cadence Genus)](#2-logic-synthesis--schematic-cadence-genus)
+- [3. Static Timing Analysis & Slack Histogram](#3-static-timing-analysis--slack-histogram)
+- [4. Physical Implementation Layouts (Cadence Innovus)](#4-physical-implementation-layouts-cadence-innovus)
+- [5. Physical Verification Signoff (Cadence PVS DRC & LVS)](#5-physical-verification-signoff-cadence-pvs-drc--lvs)
 - [Author & Acknowledgments](#-author--acknowledgments)
 
 ---
@@ -51,7 +52,7 @@ The core is a configurable **SPI Slave** peripheral supporting **SPI Mode 0** ($
 
 ## 📂 Repository Structure
 
-The repository is structured to maintain only the design sources, constraints, and final output deliverables:
+The repository maintains the design source files, constraints, and complete implementation outputs:
 
 ```text
 .
@@ -128,7 +129,7 @@ The repository is structured to maintain only the design sources, constraints, a
                       +-----------------------------+
                       |  Logic Synthesis (Genus)    |
                       |  - Target: 45nm GPDK SVT    |
-                      |  - SDC: 20 MHz sys, 2MHz SPI|
+                      |  - Schematic & Gate Netlist |
                       |  - Reports: Area/Power/Clock|
                       +-----------------------------+
                                      |
@@ -151,6 +152,7 @@ The repository is structured to maintain only the design sources, constraints, a
 |                  Parasitic Extraction & Signoff STA                     |
 |  - Signoff RC extraction -> output/netlist/spi_slave_postroute.spef     |
 |  - Delay calculation     -> output/netlist/spi_slave_postroute.sdf      |
+|  - Timing Debugger       -> 168 Passing Paths, 0 Failing (WNS: 0.0 ps)  |
 +-------------------------------------------------------------------------+
                                      |
              +-----------------------+-----------------------+
@@ -171,39 +173,55 @@ The repository is structured to maintain only the design sources, constraints, a
 
 ---
 
-## 1. Cadence Xcelium (`xrun`) Simulation & Waveforms
+## 1. Functional Simulation & SimVision Waveforms (Cadence Xcelium)
 
-Functional verification was executed using **Cadence Xcelium (`xrun`)** and debugged using **Cadence SimVision**. All 15 self-checking test cases passed with zero mismatches, verifying all multi-register read/writes, overwrites, boundary conditions, and mid-transaction CSB abort recoveries.
+Functional verification was executed using **Cadence Xcelium (`xrun`)** and inspected in **Cadence SimVision**. All 15 self-checking test cases completed with zero mismatches, verifying all multi-register read/writes, overwrites, boundary conditions (`0x00`, `0xFF`), and mid-transaction CSB abort recoveries.
 
-| Xcelium Compilation & Launch (`xrun`) | Testbench Results (15 PASSED, 0 FAILED) |
+| Simulation Environment & Workspace (`xrun`) | Testbench Results (15 PASSED, 0 FAILED) |
 |---|---|
-| ![Xcelium Launch](output/images/1st.png) | ![Xcelium Execution](output/images/2nd.png) |
+| ![Xcelium Workspace](output/images/1st.png) | ![Xcelium Test Results](output/images/2nd.png) |
 
-| SimVision Waveform Overview | Detailed Transaction & Clock Domain Crossing Waveforms |
-|---|---|
-| ![SimVision Overview](output/images/3rd.png) | ![SimVision Zoomed Waveforms](output/images/4th.png) |
+* **Left**: Cadence workspace directory structure showing the simulation database (`xcelium.d`), waveform dump (`waves.shm`), and run logs (`xrun.key`).
+* **Right**: Cadence SimVision waveform window displaying signal timing for SPI inputs (`CSB`, `MOSI`, `SCK`), system clock (`clock`), reset (`resetb`), and the verification counters (`test_num`, `pass_count`).
 
 ---
 
-## 2. Cadence Genus Synthesis Reports
+## 2. Logic Synthesis & Schematic (Cadence Genus)
 
 Logic synthesis was carried out using **Cadence Genus Synthesis Solution** targeting the **45nm GPDK SVT** standard cell library. The design achieved zero unresolved references, full timing closure, and optimized area and power budgets.
+
+### Synthesized Gate-Level Schematic
+Cadence Schematic Viewer showing the mapped standard cells, logic gate interconnection network, and hierarchical modules of the `spi_slave` core:
+
+![Synthesized Schematic](output/images/3rd.png)
 
 | Genus Area Breakdown & Cell Count | Genus Power Breakdown |
 |---|---|
 | ![Genus Area](output/images/genus%20area%206.png) | ![Genus Power](output/images/genus%20power%208.png) |
 
 ### Genus Clock Tree & Domain Constraints
-The system clock domain ($20\text{ MHz}$) and the asynchronous external SPI clock domain ($2\text{ MHz}$) were formally specified and constrained:
+Clock domain specifications for the internal system clock domain ($20\text{ MHz}$) and the asynchronous SPI serial clock domain ($2\text{ MHz}$):
 
 ![Genus Clock](output/images/genus%20clock%207.png)
 
 ---
 
-## 3. Cadence Innovus Place & Route (PnR) Layouts
+## 3. Static Timing Analysis & Slack Histogram
+
+Timing analysis across setup and hold analysis corners validated timing closure with zero violations:
+
+![Timing Slack Histogram](output/images/4th.png)
+
+* **Category Summary**: **Total Paths: 168, Passing Paths: 168, Failing Paths: 0**.
+* **Slack Margins**: **Worst Negative Slack (WNS) = 0.000 ps**, **Total Negative Slack (TNS) = 0.000 ps**.
+* **Path Histogram**: All endpoint paths exhibit positive timing slack, demonstrating timing closure.
+
+---
+
+## 4. Physical Implementation Layouts (Cadence Innovus)
 
 Physical design was completed in **Cadence Innovus Implementation System**:
-- **Floorplanning**: 65% target utilization with square aspect ratio (1.0). Pin constraints allocated on `Metal3`.
+- **Floorplanning**: 65% target core utilization with square aspect ratio (1.0). Pin constraints allocated on `Metal3`.
 - **Power Delivery Network (PDN)**: Core power rings on `Metal4`/`Metal5`, power stripes for vertical/horizontal grids, and `sroute` follow-pin rails on `Metal1`.
 - **Placement & Detail Routing**: Timing-driven placement with endcaps and well-tap cells inserted, followed by NanoRoute detail routing with OCV and CPPR analysis.
 
@@ -218,11 +236,11 @@ Full chip view showing standard cell placement, clock tree buffer distribution, 
 
 ---
 
-## 4. Cadence PVS Physical Verification Signoff (DRC & LVS)
+## 5. Physical Verification Signoff (Cadence PVS DRC & LVS)
 
 Final physical signoff was validated using **Cadence Physical Verification System (PVS)** against foundry design rule decks:
-- **Design Rule Checking (DRC)**: Layout verified clean with zero violations (`result.sum`).
-- **Layout Versus Schematic (LVS)**: Extracted layout CDL netlist matched against the logical schematic netlist (`spi_slave.rep`).
+- **Design Rule Checking (DRC)**: Layout verified clean with zero violations (`drc_signoff.sum`).
+- **Layout Versus Schematic (LVS)**: Extracted layout CDL netlist matched against the logical schematic netlist (`lvs_signoff.rep`).
 
 | Cadence PVS DRC Signoff (Clean) | Cadence PVS LVS Signoff (Matched Equivalent) |
 |---|---|
