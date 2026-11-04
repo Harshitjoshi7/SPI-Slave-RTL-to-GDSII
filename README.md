@@ -2,8 +2,10 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Technology](https://img.shields.io/badge/Node-45nm%20GPDK-green.svg)](#)
-[![Tools](https://img.shields.io/badge/EDA-Cadence%20Xcelium%20|%20Genus%20|%20Innovus%20|%20Conformal%20|%20PVS-red.svg)](#)
-[![Signoff](https://img.shields.io/badge/Signoff-DRC%20Clean%20|%20LVS%20Match-brightgreen.svg)](#)
+[![Simulator](https://img.shields.io/badge/Simulator-Cadence%20Xcelium%20(xrun)-blue.svg)](#)
+[![Synthesis](https://img.shields.io/badge/Synthesis-Cadence%20Genus-orange.svg)](#)
+[![PnR](https://img.shields.io/badge/PnR-Cadence%20Innovus-red.svg)](#)
+[![Signoff](https://img.shields.io/badge/Signoff-Cadence%20PVS%20(DRC%20|%20LVS)-brightgreen.svg)](#)
 
 A complete, production-grade digital ASIC implementation of a **4-wire synchronous SPI Slave core** with Clock Domain Crossing (CDC) synchronizers, command decoder FSM, and internal register bank, carried out from synthesizable Verilog RTL to clean **GDSII** stream-out using the **Cadence Digital Implementation Flow** on **45nm GPDK (Generic Process Design Kit)** standard cells.
 
@@ -14,7 +16,10 @@ A complete, production-grade digital ASIC implementation of a **4-wire synchrono
 - [Repository Structure](#-repository-structure)
 - [Key Implementation Deliverables (Output)](#-key-implementation-deliverables-output)
 - [ASIC Implementation Overview](#-asic-implementation-overview)
-- [Physical Layout & Verification Gallery](#-physical-layout--verification-gallery)
+- [1. Cadence Xcelium (`xrun`) Simulation & Waveforms](#1-cadence-xcelium-xrun-simulation--waveforms)
+- [2. Cadence Genus Synthesis Reports](#2-cadence-genus-synthesis-reports)
+- [3. Cadence Innovus Place & Route (PnR) Layouts](#3-cadence-innovus-place--route-pnr-layouts)
+- [4. Cadence PVS Physical Verification Signoff (DRC & LVS)](#4-cadence-pvs-physical-verification-signoff-drc--lvs)
 - [Author & Acknowledgments](#-author--acknowledgments)
 
 ---
@@ -76,7 +81,7 @@ The repository is structured to maintain only the design sources, constraints, a
 │   ├── database/
 │   │   ├── spi_slave_final.enc    # Innovus session restore file
 │   │   └── spi_slave_final.enc.dat/ # Full routed physical database
-│   └── images/                    # Tool run screenshots (Genus, Innovus, PVS DRC/LVS)
+│   └── images/                    # Tool run screenshots (Xcelium, Genus, Innovus, PVS DRC/LVS)
 ├── README.md                      # Project documentation
 └── .gitignore                     # Git ignore rules
 ```
@@ -87,7 +92,7 @@ The repository is structured to maintain only the design sources, constraints, a
 
 | File Category | Deliverable Path | Description |
 |---|---|---|
-| **Tapeout GDSII** | `output/gds/spi_slave.gds` | Final GDSII mask stream ready for fabrication |
+| **Tapeout GDSII** | `output/gds/spi_slave.gds` | Final GDSII mask stream ready for silicon fabrication |
 | **Routed Layout DB** | `output/database/spi_slave_final.enc` | Innovus full design database with placement & routes |
 | **Gate Netlists** | `output/netlist/spi_slave_synth.v`<br>`output/netlist/spi_slave_postroute.v` | Synthesized and post-route Verilog netlists |
 | **Physical LVS Netlist**| `output/netlist/spi_slave_postroute_pg.v`| Post-route netlist including explicit VDD/VSS pins |
@@ -108,6 +113,13 @@ The repository is structured to maintain only the design sources, constraints, a
                                      |
                                      v
                       +-----------------------------+
+                      |   Cadence Xcelium (xrun)    |
+                      |   Functional Sim & Waveforms|
+                      |   (15 PASSED, 0 FAILED)     |
+                      +-----------------------------+
+                                     |
+                                     v
+                      +-----------------------------+
                       |   Timing Constraints (SDC)  |
                       |  (constraints/spi_slave.sdc)|
                       +-----------------------------+
@@ -117,6 +129,7 @@ The repository is structured to maintain only the design sources, constraints, a
                       |  Logic Synthesis (Genus)    |
                       |  - Target: 45nm GPDK SVT    |
                       |  - SDC: 20 MHz sys, 2MHz SPI|
+                      |  - Reports: Area/Power/Clock|
                       +-----------------------------+
                                      |
                                      v
@@ -158,17 +171,60 @@ The repository is structured to maintain only the design sources, constraints, a
 
 ---
 
-## 🖼 Physical Layout & Verification Gallery
+## 1. Cadence Xcelium (`xrun`) Simulation & Waveforms
 
-| Floorplan & Pin Allocation | Power Distribution Network |
+Functional verification was executed using **Cadence Xcelium (`xrun`)** and debugged using **Cadence SimVision**. All 15 self-checking test cases passed with zero mismatches, verifying all multi-register read/writes, overwrites, boundary conditions, and mid-transaction CSB abort recoveries.
+
+| Xcelium Compilation & Launch (`xrun`) | Testbench Results (15 PASSED, 0 FAILED) |
+|---|---|
+| ![Xcelium Launch](output/images/1st.png) | ![Xcelium Execution](output/images/2nd.png) |
+
+| SimVision Waveform Overview | Detailed Transaction & Clock Domain Crossing Waveforms |
+|---|---|
+| ![SimVision Overview](output/images/3rd.png) | ![SimVision Zoomed Waveforms](output/images/4th.png) |
+
+---
+
+## 2. Cadence Genus Synthesis Reports
+
+Logic synthesis was carried out using **Cadence Genus Synthesis Solution** targeting the **45nm GPDK SVT** standard cell library. The design achieved zero unresolved references, full timing closure, and optimized area and power budgets.
+
+| Genus Area Breakdown & Cell Count | Genus Power Breakdown |
+|---|---|
+| ![Genus Area](output/images/genus%20area%206.png) | ![Genus Power](output/images/genus%20power%208.png) |
+
+### Genus Clock Tree & Domain Constraints
+The system clock domain ($20\text{ MHz}$) and the asynchronous external SPI clock domain ($2\text{ MHz}$) were formally specified and constrained:
+
+![Genus Clock](output/images/genus%20clock%207.png)
+
+---
+
+## 3. Cadence Innovus Place & Route (PnR) Layouts
+
+Physical design was completed in **Cadence Innovus Implementation System**:
+- **Floorplanning**: 65% target utilization with square aspect ratio (1.0). Pin constraints allocated on `Metal3`.
+- **Power Delivery Network (PDN)**: Core power rings on `Metal4`/`Metal5`, power stripes for vertical/horizontal grids, and `sroute` follow-pin rails on `Metal1`.
+- **Placement & Detail Routing**: Timing-driven placement with endcaps and well-tap cells inserted, followed by NanoRoute detail routing with OCV and CPPR analysis.
+
+| Core Floorplanning & Pin Placement (`Metal3`) | Power Delivery Network (`Metal4` / `Metal5`) |
 |---|---|
 | ![Floorplan](output/images/IN%20floorplaning%20_%209.png) | ![Power Planning](output/images/innvous%20Power%2010.png) |
 
-| Final NanoRoute Placement & Routing | Genus Synthesis Area Report |
-|---|---|
-| ![Placement & Routing](output/images/final%20placement%20routing%2011.png) | ![Genus Area](output/images/genus%20area%206.png) |
+### Final Routed ASIC Core Layout
+Full chip view showing standard cell placement, clock tree buffer distribution, and NanoRoute multi-layer signal routing:
 
-| Cadence PVS Signoff DRC | Cadence PVS Signoff LVS |
+![Final Placement and Routing](output/images/final%20placement%20routing%2011.png)
+
+---
+
+## 4. Cadence PVS Physical Verification Signoff (DRC & LVS)
+
+Final physical signoff was validated using **Cadence Physical Verification System (PVS)** against foundry design rule decks:
+- **Design Rule Checking (DRC)**: Layout verified clean with zero violations (`result.sum`).
+- **Layout Versus Schematic (LVS)**: Extracted layout CDL netlist matched against the logical schematic netlist (`spi_slave.rep`).
+
+| Cadence PVS DRC Signoff (Clean) | Cadence PVS LVS Signoff (Matched Equivalent) |
 |---|---|
 | ![PVS DRC](output/images/DRC%2012.png) | ![PVS LVS](output/images/LVS_13.png) |
 
@@ -178,4 +234,4 @@ The repository is structured to maintain only the design sources, constraints, a
 
 - **Author**: [Harshit Joshi](https://github.com/Harshitjoshi7)
 - **Technology**: 45nm Generic Process Design Kit (GPDK045)
-- **EDA Infrastructure**: Cadence Design Systems (Genus, Innovus, Xcelium, Conformal, PVS)
+- **EDA Infrastructure**: Cadence Design Systems (Genus, Innovus, Xcelium, SimVision, PVS)
